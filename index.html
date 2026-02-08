@@ -1,699 +1,456 @@
-Enter<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>سلم التدرج - تيست</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --gold:#d4af37; --gold-light:#f4d03f; --dark:#0a0a0f;
-      --card:#12121a; --muted:#9aa0a6; --transition:.15s cubic-bezier(.4,0,.2,1);
-      --max:680px;
-      --ok:#22c55e; --bad:#ef4444; --blue:#3b82f6;
-    }
-    html{background:var(--dark); color:#fff; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased}
-    body{font-family:"Tajawal",system-ui,sans-serif; min-height:100dvh; overflow-x:hidden}
-
-    .gold-text{
-      background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
-      background-size:200% auto;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      animation:shimmer 3s linear infinite;
-    }
-    @keyframes shimmer{to{background-position:200% center}}
-
-    .header{
-      position:fixed; inset:0 0 auto 0; height:60px; z-index:1000;
-      background:rgba(10,10,15,.95);
-      backdrop-filter: blur(18px) saturate(160%);
-      border-bottom:1px solid rgba(212,175,55,.12);
-    }
-    .header-inner{
-      max-width:var(--max); margin:0 auto; height:100%;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 16px;
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .badge{
-      width:40px;height:40px;border-radius:50%;
-      background:linear-gradient(135deg,var(--gold),var(--gold-light));
-      display:grid; place-items:center;
-      box-shadow:0 0 20px rgba(212,175,55,.25);
-      color:#0a0a0f; font-size:20px;
-    }
-    .icon-btn{
-      width:38px;height:38px;border-radius:50%;
-      background:rgba(212,175,55,.10);
-      border:1px solid rgba(212,175,55,.20);
-      color:var(--gold);
-      display:grid; place-items:center;
-      cursor:pointer;
-      transition:transform var(--transition);
-    }
-    .icon-btn:active{transform:scale(.96)}
-
-    .nav{
-      position:fixed; top:60px; left:0; right:0; z-index:999;
-      background:linear-gradient(180deg,rgba(10,10,15,.98),rgba(10,10,15,.88));
-      border-bottom:1px solid rgba(212,175,55,.06);
-      padding:10px 12px;
-      overflow-x:auto; scrollbar-width:none;
-    }
-    .nav::-webkit-scrollbar{display:none}
-    .nav-inner{
-      max-width:var(--max);
-      margin:0 auto;
-      display:flex; gap:10px;
-      min-width:max-content;
-      padding:0 4px;
-    }
-    .nav-btn{
-      flex:0 0 auto;
-      background:rgba(212,175,55,.08);
-      border:1px solid rgba(212,175,55,.15);
-      color:#fff;
-      padding:10px 16px;
-      border-radius:12px;
-      font-weight:900;
-      font-size:13px;
-      cursor:pointer;
-      transition:all var(--transition);
-      white-space:nowrap;
-    }
-    .nav-btn.active{
-      background:linear-gradient(135deg,rgba(212,175,55,.26),rgba(212,175,55,.10));
-      border-color:var(--gold);
-      box-shadow:0 6px 22px rgba(212,175,55,.18);
-      transform:translateY(-2px);
-    }
-
-    main{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:16px;
-      padding-top:120px;
-      padding-bottom:118px;
-    }
-
-    .grid{display:grid; gap:14px}
-    .card{
-      background:linear-gradient(145deg,rgba(18,18,26,.92),rgba(10,10,15,.96));
-      border:1px solid rgba(212,175,55,.10);
-      border-radius:22px;
-      padding:18px;
-      box-shadow:0 4px 26px rgba(0,0,0,.35);
-      transition:transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-    }
-    .card:hover{border-color:rgba(212,175,55,.22); box-shadow:0 10px 36px rgba(212,175,55,.10); transform:translateY(-2px)}
-    .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .subtle{color:var(--muted); font-weight:800; font-size:12px}
-    .title{font-size:22px; font-weight:1000}
-    .wrap{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      border-radius:999px;
-      padding:8px 12px;
-      font-weight:900;
-      font-size:12px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.04);
-      color:#e5e7eb;
-    }
-    .pill.gold{border-color:rgba(212,175,55,.25); background:rgba(212,175,55,.10); color:var(--gold)}
-    .pill.blue{border-color:rgba(59,130,246,.25); background:rgba(59,130,246,.12); color:#93c5fd}
-    .pill.ok{border-color:rgba(34,197,94,.25); background:rgba(34,197,94,.12); color:#86efac}
-    .pill.bad{border-color:rgba(239,68,68,.25); background:rgba(239,68,68,.12); color:#fca5a5}
-
-    .section{
-      background:rgba(0,0,0,.22);
-      border-radius:16px;
-      padding:14px;
-      margin-top:12px;
-      border-right:3px solid var(--gold);
-    }
-
-    .goal{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.07);
-      background:rgba(0,0,0,.22);
-    }
-    .goal h4{font-size:15px; font-weight:1000; line-height:1.6}
-    .goal p{margin-top:6px; color:#cbd5e1; font-weight:700; font-size:12px; line-height:1.7}
-    .goal-actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end}
-    .btn{
-      border:none;
-      cursor:pointer;
-      border-radius:12px;
-      padding:9px 12px;
-      font-weight:1000;
-      font-size:12px;
-      transition:transform var(--transition), filter var(--transition), background var(--transition);
-      color:#0a0a0f;
-    }
-    .btn:active{transform:scale(.97)}
-    .btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-light))}
-    .btn.ghost{
-      background:rgba(255,255,255,.06);
-      color:#e5e7eb;
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .btn.danger{
-      background:rgba(239,68,68,.15);
-      color:#fecaca;
-      border:1px solid rgba(239,68,68,.25);
-    }
-
-    .medals{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-    .medal{
-      display:inline-flex; align-items:center; gap:6px;
-      background:rgba(255,215,0,.15);
-      color:#ffd700;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:1000;
-      border:1px solid rgba(255,215,0,.20);
-    }
-
-    .fab-wrap{
-      position:fixed; left:18px; bottom:92px; z-index:1000;
-      display:flex; flex-direction:column; gap:12px;
-    }
-    .fab{
-      width:56px;height:56px;border-radius:50%;
-      border:none; cursor:pointer;
-      display:grid; place-items:center;
-      font-size:22px;
-      box-shadow:0 6px 24px rgba(0,0,0,.45);
-      transition:transform var(--transition);
-    }
-    .fab:hover{transform:scale(1.06)}
-    .fab:active{transform:scale(.96)}
-    .fab.blue{background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff}
-    .fab.gold{background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:#0a0a0f}
-
-    .bottom{
-      position:fixed; inset:auto 0 0 0; z-index:999;
-      background:rgba(10,10,15,.98);
-      backdrop-filter: blur(18px);
-      border-top:1px solid rgba(212,175,55,.12);
-      padding:8px 0 calc(8px + env(safe-area-inset-bottom));
-    }
-    .bottom-inner{max-width:var(--max); margin:0 auto; display:flex}
-    .nav-item{
-      flex:1; background:none; border:none; color:#6b7280;
-      display:flex; flex-direction:column; align-items:center; gap:4px;
-      padding:8px 6px;
-      font-weight:1000; font-size:11px; cursor:pointer;
-      transition:color var(--transition), transform var(--transition);
-    }
-    .nav-item.active{color:var(--gold)}
-    .nav-item:active{transform:scale(.96)}
-
-    .toast{
-      position:fixed; left:50%; transform:translateX(-50%);
-      bottom:140px;
-      background:rgba(0,0,0,.65);
-      border:1px solid rgba(212,175,55,.18);
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
-      font-size:13px;
-      opacity:0; pointer-events:none;
-      transition:opacity var(--transition);
-      max-width:min(92vw,520px);
-      text-align:center;
-    }
-    .toast.show{opacity:1}
-
-    .hidden{display:none !important;}
-    a{color:inherit}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زيزو بلال - Ultra Performance</title>
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <!-- Critical CSS Inline -->
+    <style>
+        /* CSS Reset & Critical Styles */
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{contain:strict;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+        body{font-family:'Tajawal',system-ui,sans-serif;background:#0a0a0f;color:#fff;overflow-x:hidden;min-height:100dvh}
+        
+        /* GPU Layer Creation */
+        .gpu-layer{transform:translateZ(0);backface-visibility:hidden;will-change:transform}
+        .gpu-layer-paint{will-change:transform,opacity;contain:layout style paint}
+        
+        /* CSS Variables - No JS needed */
+        :root{
+            --gold:#d4af37;
+            --gold-light:#f4d03f;
+            --gold-dark:#b8941f;
+            --dark:#0a0a0f;
+            --card:#12121a;
+            --transition:0.15s cubic-bezier(0.4,0,0.2,1)
+        }
+        
+        /* Containment for Performance */
+        .contain-layout{contain:layout}
+        .contain-content{contain:content;content-visibility:auto;contain-intrinsic-height:0 500px}
+        
+        /* Ultra-fast Animations */
+        @keyframes instantFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .instant-appear{animation:instantFade 0.2s ease-out both}
+        
+        /* Header - Fixed GPU Layer */
+        .header{
+            position:fixed;top:0;left:0;right:0;z-index:1000;
+            background:rgba(10,10,15,0.95);
+            backdrop-filter:blur(20px) saturate(180%);
+            border-bottom:1px solid rgba(212,175,55,0.1);
+            height:60px;
+            transform:translateZ(0);
+            contain:layout style paint
+        }
+        
+        /* Gold Gradient Text - GPU Accelerated */
+        .gold-text{
+            background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+            background-size:200% auto;
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            animation:shimmer 3s linear infinite;
+            transform:translateZ(0)
+        }
+        @keyframes shimmer{to{background-position:200% center}}
+        
+        /* Navigation - Horizontal Scroll Snap */
+        .nav-container{
+            position:fixed;top:60px;left:0;right:0;z-index:999;
+            background:linear-gradient(180deg,rgba(10,10,15,0.98),rgba(10,10,15,0.9));
+            padding:8px 16px;
+            overflow-x:auto;
+            scroll-snap-type:x mandatory;
+            scrollbar-width:none;
+            -webkit-overflow-scrolling:touch;
+            transform:translateZ(0);
+            contain:layout style
+        }
+        .nav-container::-webkit-scrollbar{display:none}
+        
+        .nav-btn{
+            scroll-snap-align:start;
+            flex-shrink:0;
+            background:rgba(212,175,55,0.08);
+            border:1px solid rgba(212,175,55,0.15);
+            color:#fff;
+            padding:10px 20px;
+            border-radius:12px;
+            font-weight:700;
+            font-size:14px;
+            cursor:pointer;
+            transition:all var(--transition);
+            transform:translateZ(0);
+            white-space:nowrap;
+            contain:layout style
+        }
+        .nav-btn:hover,.nav-btn.active{
+            background:linear-gradient(135deg,rgba(212,175,55,0.25),rgba(212,175,55,0.1));
+            border-color:var(--gold);
+            box-shadow:0 4px 20px rgba(212,175,55,0.2);
+            transform:translateY(-2px) translateZ(0)
+        }
+        
+        /* Main Content - Optimized Rendering */
+        .main-content{
+            margin-top:120px;
+            padding:16px;
+            padding-bottom:100px;
+            contain:layout style
+        }
+        
+        /* Cards - GPU Accelerated with Containment */
+        .card{
+            background:linear-gradient(145deg,rgba(18,18,26,0.9),rgba(10,10,15,0.95));
+            border:1px solid rgba(212,175,55,0.08);
+            border-radius:24px;
+            padding:24px;
+            margin-bottom:16px;
+            transform:translateZ(0);
+            transition:all var(--transition);
+            contain:layout style paint;
+            box-shadow:0 4px 24px rgba(0,0,0,0.3)
+        }
+        .card:hover{
+            border-color:rgba(212,175,55,0.2);
+            box-shadow:0 8px 32px rgba(212,175,55,0.1);
+            transform:translateY(-4px) translateZ(0)
+        }
+        
+        /* Tags - Pill Design */
+        .tag{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            background:rgba(212,175,55,0.1);
+            border:1px solid rgba(212,175,55,0.2);
+            color:var(--gold);
+            padding:8px 16px;
+            border-radius:50px;
+            font-size:13px;
+            font-weight:700;
+            margin:4px;
+            transform:translateZ(0);
+            transition:all var(--transition);
+            contain:layout style
+        }
+        .tag:hover{
+            background:rgba(212,175,55,0.2);
+            transform:scale(1.05) translateZ(0)
+        }
+        
+        /* Content Sections with Lazy Rendering */
+        .content-section{
+            background:rgba(0,0,0,0.2);
+            border-radius:16px;
+            padding:20px;
+            margin:12px 0;
+            border-right:3px solid var(--gold);
+            transform:translateZ(0);
+            contain:content;
+            content-visibility:auto;
+            contain-intrinsic-height:auto 200px
+        }
+        
+        /* Medal System */
+        .medal{
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
+            background:rgba(255,215,0,0.15);
+            color:#ffd700;
+            padding:6px 12px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:800
+        }
+        
+        /* Floating Buttons - Fixed GPU Layer */
+        .fab-container{
+            position:fixed;
+            bottom:90px;
+            left:20px;
+            z-index:1000;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+            transform:translateZ(0);
+            contain:layout style
+        }
+        .fab{
+            width:56px;height:56px;
+            border-radius:50%;
+            border:none;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:24px;
+            transform:translateZ(0);
+            transition:all var(--transition);
+            box-shadow:0 4px 20px rgba(0,0,0,0.4);
+            contain:layout style paint
+        }
+        .fab:hover{transform:scale(1.1) translateZ(0)}
+        .fab-gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0a0f}
+        .fab-blue{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff}
+        
+        /* Bottom Navigation */
+        .bottom-nav{
+            position:fixed;
+            bottom:0;left:0;right:0;
+            background:rgba(10,10,15,0.98);
+            backdrop-filter:blur(20px);
+            border-top:1px solid rgba(212,175,55,0.1);
+            padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+            z-index:999;
+            transform:translateZ(0);
+            contain:layout style paint
+        }
+        .nav-item{
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:4px;
+            padding:8px;
+            color:#666;
+            font-size:11px;
+            font-weight:700;
+            cursor:pointer;
+            transition:all var(--transition);
+            transform:translateZ(0);
+            border:none;
+            background:none
+        }
+        .nav-item.active{color:var(--gold)}
+        .nav-item:active{transform:scale(0.95)}
+        
+        /* Progressive Enhancement */
+        @supports(paint-order:stroke){.enhanced{text-shadow:none}}
+        @supports(scroll-timeline:--works){.scroll-driven{animation-timeline:scroll()}}
+        
+        /* Reduced Motion Support */
+        @media(prefers-reduced-motion:reduce){
+            *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+        }
+        
+        /* High Contrast Mode */
+        @media(prefers-contrast:high){
+            .card{border-width:2px}
+            .tag{border-width:2px}
+        }
+    </style>
+    
+    <!-- Async Font Loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet"></noscript>
 </head>
-
 <body>
-  <header class="header">
-    <div class="header-inner">
-      <div class="brand">
-        <div class="badge" aria-hidden="true">🪜</div>
-        <div>
-          <div class="subtle">تيست تطبيق فعلي - صفحة واحدة</div>
-          <div class="gold-text" style="font-weight:1000;font-size:18px">سلم التدرج</div>
+
+    <!-- Header -->
+    <header class="header gpu-layer">
+        <div style="display:flex;align-items:center;justify-content:space-between;height:100%;padding:0 20px;max-width:600px;margin:0 auto">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px rgba(212,175,55,0.3)">🪜</div>
+                <h1 class="gold-text" style="font-size:20px;font-weight:800">سلم التدرج</h1>
+            </div>
+            <button style="width:36px;height:36px;border-radius:50%;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer">👤</button>
         </div>
-      </div>
-      <button class="icon-btn" id="resetBtn" title="تصفير التيست" aria-label="تصفير">🧹</button>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container gpu-layer">
+        <div style="display:flex;gap:12px;min-width:max-content">
+            <button class="nav-btn active">🪜 سلم التدرج</button>
+            <button class="nav-btn">🔄 قبل وبعد</button>
+            <button class="nav-btn">🎬 مشهد تخيلي</button>
+            <button class="nav-btn">📊 إحصائيات</button>
+            <button class="nav-btn">🔗 ربط بالعادات</button>
+            <button class="nav-btn">💬 حوارات متخيلة</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content contain-layout">
+        
+        <!-- Title Card -->
+        <div class="card instant-appear gpu-layer-paint">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                <span style="font-size:32px">🪜</span>
+                <div>
+                    <h2 style="font-size:18px;color:#888;margin-bottom:4px">العنوان:</h2>
+                    <h3 class="gold-text" style="font-size:24px;font-weight:800">سلم التدرج</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Levels Container -->
+        <div class="card gpu-layer-paint">
+            <h3 class="gold-text" style="font-size:22px;font-weight:800;text-align:center;margin-bottom:20px">المستويات</h3>
+            
+            <!-- Level 1 -->
+            <div class="content-section gpu-layer">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <span class="tag">المستوى: 1</span>
+                    <span style="font-size:24px">🥇</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                    <span class="tag" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)">الهدف: احفظ دعاء يا حي يا قيوم</span>
+                </div>
+                <div class="medal">
+                    <span>🏅</span>
+                    <span>الجائزة</span>
+                </div>
+            </div>
+
+            <!-- Level 2 -->
+            <div class="content-section gpu-layer">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <span class="tag">المستوى: 2</span>
+                    <span style="font-size:24px">🥈</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                    <span class="tag" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)">الهدف: صم يوم واحد في الأسبوع</span>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <span class="medal">🏅</span>
+                    <span class="medal">🏅</span>
+                </div>
+            </div>
+
+            <!-- Level 3 -->
+            <div class="content-section gpu-layer">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <span class="tag">المستوى: 3</span>
+                    <span style="font-size:24px">🥉</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+                    <span class="tag" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)">الهدف: قم الليل 3 مرات في الأسبوع</span>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <span class="medal">🏅</span>
+                    <span class="medal">🏅</span>
+                    <span class="medal">🏅</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dialogues Section -->
+        <div class="card gpu-layer-paint contain-content">
+            <h3 class="gold-text" style="font-size:22px;font-weight:800;text-align:center;margin-bottom:20px">حوارات متخيلة</h3>
+            
+            <div class="content-section">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                    <span class="tag">الرقم: 1</span>
+                    <span style="font-size:20px">💬</span>
+                </div>
+                <h4 style="color:var(--gold);margin-bottom:12px;font-size:18px">حوار مع النفس</h4>
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:12px;margin-bottom:12px">
+                    <p style="color:#e5e5e5;line-height:1.8;font-size:16px">أنا قوي ومش محتاج حد</p>
+                </div>
+                <span class="tag" style="background:rgba(239,68,68,0.1);color:#f87171;border-color:rgba(239,68,68,0.2)">المتحدث: النفس</span>
+            </div>
+
+            <div class="content-section">
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:12px;margin-bottom:12px">
+                    <p style="color:#e5e5e5;line-height:1.8;font-size:16px">لا! من قال أنا بالاستغناء كذّب</p>
+                </div>
+                <span class="tag" style="background:rgba(34,197,94,0.1);color:#4ade80;border-color:rgba(34,197,94,0.2)">المتحدث: القلب</span>
+            </div>
+
+            <div class="content-section">
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:12px">
+                    <p style="color:#e5e5e5;line-height:1.8;font-size:16px">طيب أعمل إيه؟</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-container gpu-layer">
+        <button class="fab fab-blue" onclick="document.querySelector('.main-content').scrollIntoView({behavior:'smooth'})" aria-label="بحث">🔍</button>
+        <button class="fab fab-gold" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="للأعلى">⬆️</button>
     </div>
-  </header>
 
-  <nav class="nav" aria-label="التنقل العلوي">
-    <div class="nav-inner">
-      <button class="nav-btn active" data-view="home">🏠 الرئيسية</button>
-      <button class="nav-btn" data-view="ladder">🪜 السلم</button>
-      <button class="nav-btn" data-view="stats">📊 الإحصائيات</button>
-      <button class="nav-btn" data-view="dialogues">💬 الحوارات</button>
-    </div>
-  </nav>
-
-  <main>
-    <!-- HOME -->
-    <section class="grid" id="view-home">
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="subtle">نظرة عامة</div>
-            <div class="title gold-text">جاهز للتجربة</div>
-          </div>
-          <span class="pill gold" id="todayPill">اليوم</span>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div style="display:flex;max-width:600px;margin:0 auto">
+            <button class="nav-item active">
+                <span style="font-size:24px">🏠</span>
+                <span>الرئيسية</span>
+            </button>
+            <button class="nav-item">
+                <span style="font-size:24px">📖</span>
+                <span>القرآن</span>
+            </button>
+            <button class="nav-item">
+                <span style="font-size:24px">🤲</span>
+                <span>الأذكار</span>
+            </button>
+            <button class="nav-item">
+                <span style="font-size:24px">👤</span>
+                <span>حسابي</span>
+            </button>
         </div>
+    </nav>
 
-        <div class="section">
-          <div class="wrap">
-            <span class="pill" id="streakPill">ستريك: 0</span>
-            <span class="pill" id="donePill">منجز: 0</span>
-            <span class="pill" id="medalsPill">ميداليات: 0</span>
-          </div>
+    <!-- Ultra-fast Interactions -->
+    <script>
+        // Passive Event Listeners for Performance
+        document.addEventListener('touchstart',()=>{}, {passive:true});
+        document.addEventListener('touchmove',()=>{}, {passive:true});
+        document.addEventListener('wheel',()=>{}, {passive:true});
 
-          <div class="wrap" style="margin-top:12px">
-            <button class="btn primary" id="goLadderBtn">روح للسلم</button>
-            <button class="btn ghost" id="quickDoneBtn">إنجاز سريع (للاختبار)</button>
-          </div>
-
-          <div class="subtle" style="margin-top:12px; line-height:1.7">
-            كل إنجاز بيتسجل على جهازك تلقائيًا. اقفل وافتح هتلاقيه موجود.
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="subtle">ملاحظة</div>
-            <div class="title">ده تيست</div>
-          </div>
-          <span class="pill blue">SPA</span>
-        </div>
-        <div class="section">
-          <div class="subtle" style="line-height:1.8">
-            لو عايز بعد التيست أعملهولك “إضافة أهداف / تعديل مستويات / تنبيهات”، قولّي.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- LADDER -->
-    <section class="grid hidden" id="view-ladder">
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="subtle">القسم</div>
-            <div class="title gold-text">المستويات</div>
-          </div>
-          <span class="pill gold" id="levelProgressPill">تقدم: 0/3</span>
-        </div>
-
-        <div class="section" id="levelsContainer"></div>
-      </div>
-    </section>
-
-    <!-- STATS -->
-    <section class="grid hidden" id="view-stats">
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="subtle">القسم</div>
-            <div class="title gold-text">الإحصائيات</div>
-          </div>
-          <span class="pill">Local</span>
-        </div>
-
-        <div class="section">
-          <div class="wrap" id="statsWrap"></div>
-        </div>
-
-        <div class="section">
-          <div class="row">
-            <span class="pill blue">آخر إنجاز</span>
-            <span class="pill" id="lastDonePill">—</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DIALOGUES -->
-    <section class="grid hidden" id="view-dialogues">
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="subtle">القسم</div>
-            <div class="title gold-text">حوارات متخيلة</div>
-          </div>
-          <span class="pill">💬</span>
-        </div>
-
-        <div class="section">
-          <div class="goal">
-            <div>
-              <h4>أنا قوي ومش محتاج حد</h4>
-              <p>المتحدث: النفس</p>
-            </div>
-            <div class="goal-actions">
-              <span class="pill bad">النفس</span>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="goal">
-            <div>
-              <h4>لا! من قال أنا بالاستغناء كذّب</h4>
-              <p>المتحدث: القلب</p>
-            </div>
-            <div class="goal-actions">
-              <span class="pill ok">القلب</span>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="goal">
-            <div>
-              <h4>طيب أعمل إيه؟</h4>
-              <p>رد عملي: ابدأ بدرجة واحدة النهارده</p>
-            </div>
-            <div class="goal-actions">
-              <button class="btn primary" id="goHomeBtn">ابدأ</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <div class="fab-wrap" aria-label="أزرار سريعة">
-    <button class="fab blue" id="fabStats" title="الإحصائيات">📊</button>
-    <button class="fab gold" id="fabTop" title="للأعلى">⬆️</button>
-  </div>
-
-  <nav class="bottom" aria-label="القائمة السفلية">
-    <div class="bottom-inner">
-      <button class="nav-item active" data-view="home">
-        <div style="font-size:22px" aria-hidden="true">🏠</div><div>الرئيسية</div>
-      </button>
-      <button class="nav-item" data-view="ladder">
-        <div style="font-size:22px" aria-hidden="true">🪜</div><div>السلم</div>
-      </button>
-      <button class="nav-item" data-view="stats">
-        <div style="font-size:22px" aria-hidden="true">📊</div><div>إحصائيات</div>
-      </button>
-      <button class="nav-item" data-view="dialogues">
-        <div style="font-size:22px" aria-hidden="true">💬</div><div>حوارات</div>
-      </button>
-    </div>
-  </nav>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    // -------- state & storage ----------
-    const STORAGE_KEY = "ladder_app_v1";
-    const todayISO = () => new Date().toISOString().slice(0,10);
-
-    const defaultState = () => ({
-      createdAt: Date.now(),
-      lastDoneDate: null,
-      streak: 0,
-      totalDone: 0,
-      medals: 0,
-      doneByGoalId: {}, // {goalId: true}
-      doneLog: [] // [{date, goalId}]
-    });
-
-    const LEVELS = [
-      {
-        id:"lvl1", name:"المستوى 1", icon:"🥇",
-        goals:[
-          { id:"g1", title:"احفظ دعاء يا حي يا قيوم", reward:1 }
-        ]
-      },
-      {
-        id:"lvl2", name:"المستوى 2", icon:"🥈",
-        goals:[
-          { id:"g2", title:"صم يوم واحد في الأسبوع", reward:2 }
-        ]
-      },
-      {
-        id:"lvl3", name:"المستوى 3", icon:"🥉",
-        goals:[
-          { id:"g3", title:"قم الليل 3 مرات في الأسبوع", reward:3 }
-        ]
-      }
-    ];
-
-    const loadState = () => {
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return defaultState();
-        const s = JSON.parse(raw);
-        return { ...defaultState(), ...s };
-      }catch(e){
-        return defaultState();
-      }
-    };
-
-    const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-
-    let state = loadState();
-
-    // -------- ui helpers ----------
-    const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
-    const toast = document.getElementById("toast");
-    const showToast = (msg) => {
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>toast.classList.remove("show"), 1400);
-    };
-
-    const setActiveNav = (view) => {
-
-      $$(".nav-btn").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
-
-      $$(".bottom .nav-item").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
-    };
-
-    const showView = (view) => {
-      const views = ["home","ladder","stats","dialogues"];
-      views.forEach(v=>{
-        document.getElementById("view-"+v).classList.toggle("hidden", v!==view);
-      });
-      setActiveNav(view);
-      window.scrollTo({top:0, behavior:"smooth"});
-    };
-
-    // -------- app logic ----------
-    const calcLevelProgress = () => {
-      const doneGoals = Object.keys(state.doneByGoalId).length;
-      const totalGoals = LEVELS.reduce((a,l)=>a+l.goals.length,0);
-      return { doneGoals, totalGoals };
-    };
-
-    const updateStreak = () => {
-      const t = todayISO();
-      if(state.lastDoneDate === t) return; // already counted today
-      if(!state.lastDoneDate){
-        state.streak = 1;
-      } else {
-        const last = new Date(state.lastDoneDate);
-        const now = new Date(t);
-        const diffDays = Math.round((now - last) / (1000*60*60*24));
-        if(diffDays === 1) state.streak += 1;
-        else state.streak = 1;
-      }
-      state.lastDoneDate = t;
-    };
-
-    const markDone = (goalId, reward=1) => {
-      if(state.doneByGoalId[goalId]){
-        showToast("متسجل قبل كده");
-        return;
-      }
-      state.doneByGoalId[goalId] = true;
-      state.totalDone += 1;
-      state.medals += reward;
-      state.doneLog.unshift({ date: todayISO(), goalId });
-      updateStreak();
-      saveState();
-      renderAll();
-      showToast("تمام! اتسجل ✅");
-      if(navigator.vibrate) navigator.vibrate(8);
-    };
-
-    const resetAll = () => {
-      state = defaultState();
-      saveState();
-      renderAll();
-      showToast("اتصفّر التيست");
-    };
-
-    // -------- render ----------
-    const todayPill = document.getElementById("todayPill");
-    const streakPill = document.getElementById("streakPill");
-    const donePill = document.getElementById("donePill");
-    const medalsPill = document.getElementById("medalsPill");
-    const levelProgressPill = document.getElementById("levelProgressPill");
-    const lastDonePill = document.getElementById("lastDonePill");
-    const statsWrap = document.getElementById("statsWrap");
-    const levelsContainer = document.getElementById("levelsContainer");
-
-    const renderHome = () => {
-      todayPill.textContent = "اليوم: " + todayISO();
-      streakPill.textContent = "ستريك: " + (state.streak || 0);
-      donePill.textContent = "منجز: " + (state.totalDone || 0);
-      medalsPill.textContent = "ميداليات: " + (state.medals || 0);
-    };
-
-    const renderLevels = () => {
-      const {doneGoals,totalGoals} = calcLevelProgress();
-      levelProgressPill.textContent = `تقدم: ${doneGoals}/${totalGoals}`;
-
-      levelsContainer.innerHTML = "";
-      LEVELS.forEach(level=>{
-        const levelDone = level.goals.every(g => !!state.doneByGoalId[g.id]);
-        const levelEl = document.createElement("div");
-        levelEl.className = "goal";
-        levelEl.style.marginBottom = "10px";
-        levelEl.innerHTML = `
-          <div style="min-width:0">
-            <h4 style="display:flex;gap:10px;align-items:center">
-              <span aria-hidden="true">${level.icon}</span>
-              <span>${level.name}</span>
-              ${levelDone ? `<span class="pill ok">مكتمل</span>` : ``}
-            </h4>
-            <p>عدد الأهداف: ${level.goals.length}</p>
-          </div>
-          <div class="goal-actions">
-            <span class="pill gold">مكافأة</span>
-          </div>
-        `;
-        levelsContainer.appendChild(levelEl);
-
-        level.goals.forEach(goal=>{
-          const done = !!state.doneByGoalId[goal.id];
-          const g = document.createElement("div");
-          g.className = "goal";
-          g.style.marginBottom = "10px";
-          g.innerHTML = `
-            <div style="min-width:0">
-              <h4>${goal.title}</h4>
-              <p>${done ? "اتعمل ✅" : "لسه"}</p>
-              <div class="medals">
-                <span class="medal">🏅 +${goal.reward} ميدالية</span>
-              </div>
-            </div>
-            <div class="goal-actions">
-              ${
-                done
-                ? `<span class="pill ok">تم</span>`
-                : `<button class="btn primary" data-done="${goal.id}" data-reward="${goal.reward}">تم</button>`
-              }
-            </div>
-          `;
-          levelsContainer.appendChild(g);
+        // Instant Navigation Switching
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            btn.addEventListener('click',function(){
+                document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+                this.classList.add('active');
+                // Haptic feedback if available
+                if(navigator.vibrate)navigator.vibrate(5);
+            });
         });
 
-        const hr = document.createElement("div");
-        hr.style.height = "8px";
-        levelsContainer.appendChild(hr);
-      });
-
-      // bind done buttons
-
-      $$("button[data-done]", levelsContainer).forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          markDone(btn.dataset.done, Number(btn.dataset.reward||1));
+        // Bottom Nav Instant Switch
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item=>{
+            item.addEventListener('click',function(){
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(i=>i.classList.remove('active'));
+                this.classList.add('active');
+                if(navigator.vibrate)navigator.vibrate(3);
+            });
         });
-      });
-    };
 
-    const renderStats = () => {
-      statsWrap.innerHTML = "";
+        // Intersection Observer for Lazy Rendering (Native API)
+        if('IntersectionObserver' in window){
+            const observer=new IntersectionObserver((entries)=>{
+                entries.forEach(entry=>{
+                    if(entry.isIntersecting){
+                        entry.target.style.contentVisibility='visible';
+                    }
+                });
+            },{rootMargin:'50px'});
+            
+            document.querySelectorAll('.content-section').forEach(el=>observer.observe(el));
+        }
 
-      const {doneGoals,totalGoals} = calcLevelProgress();
-      const items = [
-        ["تاريخ اليوم", todayISO(), "blue"],
-        ["ستريك", String(state.streak||0), "gold"],
-        ["إجمالي إنجازات", String(state.totalDone||0), "gold"],
-        ["ميداليات", String(state.medals||0), "gold"],
-        ["أهداف مكتملة", `${doneGoals}/${totalGoals}`, "blue"],
-        ["عدد السجلات", String(state.doneLog.length), "blue"]
-      ];
-
-      items.forEach(([k,v,cls])=>{
-        const el = document.createElement("span");
-        el.className = "pill " + (cls||"");
-        el.textContent = `${k}: ${v}`;
-        statsWrap.appendChild(el);
-      });
-
-      if(state.doneLog[0]){
-        lastDonePill.textContent = `${state.doneLog[0].goalId} - ${state.doneLog[0].date}`;
-      } else {
-        lastDonePill.textContent = "—";
-      }
-    };
-
-    const renderAll = () => {
-      renderHome();
-      renderLevels();
-      renderStats();
-    };
-
-    // -------- events ----------
-
-    $$(".nav-btn").forEach(b=>{
-      b.addEventListener("click", ()=> showView(b.dataset.view), {passive:true});
-    });
-
-    $$(".bottom .nav-item").forEach(b=>{
-      b.addEventListener("click", ()=> showView(b.dataset.view), {passive:true});
-    });
-
-    document.getElementById("fabTop").addEventListener("click", ()=>{
-      window.scrollTo({top:0, behavior:"smooth"});
-    }, {passive:true});
-
-    document.getElementById("fabStats").addEventListener("click", ()=>{
-      showView("stats");
-    }, {passive:true});
-
-    document.getElementById("goLadderBtn").addEventListener("click", ()=> showView("ladder"));
-    document.getElementById("goHomeBtn").addEventListener("click", ()=> showView("home"));
-
-    document.getElementById("quickDoneBtn").addEventListener("click", ()=>{
-      // for test: mark next not-done goal
-      const allGoals = LEVELS.flatMap(l=>l.goals);
-      const next = allGoals.find(g => !state.doneByGoalId[g.id]);
-      if(!next) return showToast("كل الأهداف مكتملة");
-      markDone(next.id, next.reward);
-    });
-
-    document.getElementById("resetBtn").addEventListener("click", ()=>{
-      const ok = confirm("متأكد تصفّر التيست؟");
-      if(ok) resetAll();
-    });
-
-    // initial
-    renderAll();
-    showView("home");
-  </script>
+        // Preload next content on idle
+        if('requestIdleCallback' in window){
+            requestIdleCallback(()=>{
+                // Preload critical resources
+                const link=document.createElement('link');
+                link.rel='prefetch';
+                link.href='/next-page';
+                document.head.appendChild(link);
+            });
+        }
+    </script>
 </body>
 </html>
