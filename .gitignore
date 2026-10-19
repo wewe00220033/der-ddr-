@@ -1,0 +1,47 @@
+# ==============================================================================
+# OSRS Master Private Repository .gitignore
+# Bolla Constitution Law 8 Compliance: Zero Credential & Secret Leakage
+# ==============================================================================
+
+# Byte-compiled / optimized / Java build files
+__pycache__/
+*.py[cod]
+*$py.class
+*.class
+target/
+build/
+.gradle/
+*.jar
+!libs/*.jar
+
+# IDE & Editor settings
+.idea/
+.vscode/
+*.iml
+*.sublime-workspace
+*.suo
+*.user
+
+# Secrets, Tokens, Keys, Private Environment Variables
+keys.txt
+*.key
+*.pem
+*.token
+*.env
+*.env.*
+credentials.json
+account_secrets*.json
+accounts_private*.json
+passwords*.txt
+
+# Logs, Dumps & Temp files
+*.log
+*.tmp
+*.bak
+temp/
+scratch/
+
+# Operating System Metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
