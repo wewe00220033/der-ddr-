@@ -306,31 +306,37 @@ def main():
     pos_cur = st_cur.get("player", {}).get("position", {})
     px, py = pos_cur.get('x', 0), pos_cur.get('y', 0)
     if 2110 <= px <= 2185 and py >= 5000:
-        print("\n--- [المرحلة 5]: عبور متاهة الطابق الثالث بمحطات وسيطة (Waypoints) وحصد 5,000 GP ---")
-        # محطة 1: أمام الباب الشرقي الأول
-        walk_to(2132, 5258, plane=0, timeout=25)
-        try_pass_door("Oozing barrier")
-        # محطة 2: أمام الباب الشمالي الثاني
-        walk_to(2132, 5260, plane=0, timeout=15)
-        try_pass_door("Oozing barrier")
-        # محطة 3: أمام ممر غرفة الصندوق
-        walk_to(2132, 5277, plane=0, timeout=30)
-        try_pass_door("Oozing barrier")
-        # محطة 4: غرفة الصندوق مباشرة
-        walk_to(2144, 5281, plane=0, timeout=30)
+        vb3_chk = api_get("/varbits?id=2311").get("value", 0)
+        if vb3_chk == 1:
+            print("\n💰 مكافأة الطابق 3 (5,000 GP) مستلمة بالفعل في الحساب!")
+        else:
+            print("\n--- [المرحلة 5]: عبور متاهة الطابق الثالث بمحطات وسيطة (Waypoints) وحصد 5,000 GP ---")
+            if not (px >= 2140 and py >= 5278):
+                # محطة 1: أمام الباب الشرقي الأول
+                walk_to(2132, 5258, plane=0, timeout=25)
+                try_pass_door("Oozing barrier")
+                # محطة 2: أمام الباب الشمالي الثاني
+                walk_to(2132, 5260, plane=0, timeout=15)
+                try_pass_door("Oozing barrier")
+                # محطة 3: أمام ممر غرفة الصندوق
+                walk_to(2132, 5277, plane=0, timeout=30)
+                try_pass_door("Oozing barrier")
+                # محطة 4: غرفة الصندوق مباشرة
+                walk_to(2144, 5281, plane=0, timeout=30)
 
-        for attempt in range(3):
-            interact_object(23709, "Open")
-            time.sleep(2)
-            handle_dialogue_and_modals()
-            vb3 = api_get("/varbits?id=2311").get("value", 0)
-            if vb3 == 1:
-                print("💰 مبروووك! تم استلام الـ 5,000 GP بنجاح!")
-                break
+            for attempt in range(4):
+                interact_object(23709, "Open")
+                for _ in range(6):
+                    time.sleep(1)
+                    handle_dialogue_and_modals()
+                vb3 = api_get("/varbits?id=2311").get("value", 0)
+                if vb3 == 1:
+                    print("💰 مبروووك! تم استلام الـ 5,000 GP بنجاح!")
+                    break
         
         print("\n--- [المرحلة 6]: النزول للطابق الرابع عبر السلم (23706) ---")
-        walk_to(2147, 5284, plane=0, timeout=60)
-        for attempt in range(4):
+        walk_to(2147, 5284, plane=0, timeout=30)
+        for attempt in range(5):
             interact_object(23706, "Climb-down")
             for _ in range(6):
                 time.sleep(1)
@@ -349,17 +355,38 @@ def main():
     pos_cur = st_cur.get("player", {}).get("position", {})
     px, py = pos_cur.get('x', 0), pos_cur.get('y', 0)
     if 2300 <= px <= 2375 and py >= 5000:
-        print("\n--- [المرحلة 7]: التوجه لمهد الحياة (Cradle of Life) لحصد Fancy Boots ---")
-        walk_to(2343, 5215, plane=0, timeout=120)
-        for attempt in range(3):
-            interact_object(23731, "Search")
-            for _ in range(5):
-                time.sleep(1)
-                handle_dialogue_and_modals()
-            vb4 = api_get("/varbits?id=2312").get("value", 0)
-            if vb4 == 1:
-                print("👟 مبروووك! تم اختيار وحصد Fancy Boots بنجاح!")
-                break
+        vb4_cur = api_get("/varbits?id=2312").get("value", 0)
+        if vb4_cur == 1:
+            print("👟 مكافأة Fancy Boots مستلمة بالفعل في الحساب!")
+        else:
+            print("\n--- [المرحلة 7]: التوجه لمهد الحياة (Cradle of Life) لحصد Fancy Boots ---")
+            # 1. التوجه نحو أول باب شمالي وتجاوز البابين
+            walk_to(2359, 5230, plane=0, timeout=20)
+            try_pass_door("Portal of Death")
+            walk_to(2359, 5234, plane=0, timeout=10)
+            try_pass_door("Portal of Death")
+
+            # 2. الجري السريع في الممر الشمالي الغربي
+            walk_to(2341, 5238, plane=0, timeout=25)
+            walk_to(2341, 5226, plane=0, timeout=20)
+
+            # 3. أبواب الدخول لغرفة مهد الحياة
+            try_pass_door("Portal of Death")
+            walk_to(2341, 5222, plane=0, timeout=10)
+            try_pass_door("Portal of Death")
+
+            # 4. التوجه أمام المهد مباشرة
+            walk_to(2343, 5215, plane=0, timeout=15)
+
+            for attempt in range(5):
+                interact_object(23731, "Search")
+                for _ in range(6):
+                    time.sleep(1)
+                    handle_dialogue_and_modals()
+                vb4 = api_get("/varbits?id=2312").get("value", 0)
+                if vb4 == 1:
+                    print("👟 مبروووك! تم اختيار وحصد Fancy Boots بنجاح!")
+                    break
 
         print("\n--- [المرحلة 8]: الهروب للسطح عبر الحبل العظمي (Bone Chain: 23732) ---")
         walk_to(2349, 5215, plane=0, timeout=20)
